@@ -1,17 +1,12 @@
-#############################################################################
+﻿#############################################################################
 # Config file generation and installation
 #############################################################################
 
 # Set where cmake will install liblas-config.cmake.  It's installed in
 # ${CMAKE_INSTALL_PREFIX}/${INSTALL_CMAKE_DIR} and ${PROJECT_ROOT_DIR}
 # is the relative path to the root from there.
-if (NOT WIN32)
-  set(INSTALL_CMAKE_DIR "${LIBLAS_LIB_DIR}/cmake/${PROJECT_NAME}")
-  set (PROJECT_ROOT_DIR "../../..")
-else ()
-  set(INSTALL_CMAKE_DIR "cmake")
-  set (PROJECT_ROOT_DIR "..")
-endif ()
+set(INSTALL_CMAKE_DIR "${LIBLAS_LIB_DIR}/cmake/${PROJECT_NAME}")
+set (PROJECT_ROOT_DIR "../../..")
 
 # Now create the liblas-config files using the .in templates
 configure_file (liblas-config.cmake.in

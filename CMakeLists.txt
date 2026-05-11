@@ -1,11 +1,11 @@
-###############################################################################
+﻿###############################################################################
 # Main CMake configuration file for libLAS
 #
 # Author: Mateusz Loskot <mateusz@loskot.net>
 #
 #
 ###############################################################################
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.10)
 
 # libLAS general settings
 project(libLAS)
@@ -14,7 +14,7 @@ set(CMAKE_CXX_STANDARD 14 CACHE STRING "C++ standard version to use (default is 
 
 SET(LIBLAS_VERSION_MAJOR "1")
 SET(LIBLAS_VERSION_MINOR "8")
-SET(LIBLAS_VERSION_PATCH "2b1")
+SET(LIBLAS_VERSION_PATCH "2c")
 set(VERSION "${LIBLAS_VERSION_MAJOR}.${LIBLAS_VERSION_MINOR}.${LIBLAS_VERSION_PATCH}")
 SET(LIBLAS_LIB_VERSION "2.4.0")
 SET(LIBLAS_LIB_SOVERSION "3")
@@ -50,9 +50,9 @@ set(LIBLAS_UNIT_TEST liblas_test)
 set(CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
 
 # Choose package components
-set(WITH_UTILITIES TRUE CACHE BOOL "Choose if libLAS utilities should be built")
-set(WITH_TESTS TRUE CACHE BOOL "Choose if libLAS unit tests should be built")
-set(BUILD_OSGEO4W TRUE CACHE BOOL "Should OSGeo4W package for Windows be built")
+set(WITH_UTILITIES FALSE CACHE BOOL "Choose if libLAS utilities should be built")
+set(WITH_TESTS FALSE CACHE BOOL "Choose if libLAS unit tests should be built")
+set(BUILD_OSGEO4W FALSE CACHE BOOL "Should OSGeo4W package for Windows be built")
 
 # Choose to use pkg-config or not
 if (UNIX OR MINGW)
@@ -109,9 +109,9 @@ file(WRITE "README.txt" "${README}")
 
 if(WIN32)
   if (MSVC)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     if (MSVC80 OR MSVC90 OR MSVC10 OR MSVC11 OR MSVC12)
       add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
-      add_definitions(-D_CRT_SECURE_NO_WARNINGS)
       add_definitions(-D_CRT_NONSTDC_NO_WARNING)
       add_definitions(-D_SCL_SECURE_NO_WARNINGS)
     endif()
@@ -171,7 +171,7 @@ endif(APPLE)
 # Search for dependencies
 
 # Boost C++ Libraries support - required
-message(STATUS "Searching for Boost 1.38+ - done")
+message(STATUS "Searching for Boost 1.80+ - done")
 
 # Default to using static, multithreaded libraries for
 # linking under MSVC.  This is because we show users how to
@@ -185,7 +185,7 @@ if(WIN32)
 endif(WIN32)
 
 find_package(Threads)
-find_package(Boost 1.42 COMPONENTS iostreams program_options serialization thread REQUIRED)
+find_package(Boost 1.80 COMPONENTS iostreams program_options serialization thread REQUIRED)
 
 # The following header-only and their dependencies are additionally required,
 # but cannot be explicitly requested via find_package, so make sure they exists:
@@ -236,10 +236,7 @@ if (GDAL_FOUND)
   set(WITH_GDAL TRUE)
   mark_as_advanced(CLEAR GDAL_INCLUDE_DIR)
   mark_as_advanced(CLEAR GDAL_LIBRARY)
-  find_package (PROJ4 NO_MODULE QUIET)
-  if (NOT PROJ4_FOUND)
-    find_package (PROJ4)
-  endif ()
+  find_package (PROJ4 REQUIRED)
 endif()
 
 # GeoTIFF support - required, default=ON
@@ -255,7 +252,7 @@ if(WITH_GEOTIFF)
     add_definitions(-DHAVE_LIBGEOTIFF=1)
 
     # geotiff probably depends on proj, so we need those libs to avoid linker errors
-    find_package(PROJ)
+    # find_package(PROJ QUIET)
 
     mark_as_advanced(CLEAR TIFF_INCLUDE_DIR)
     mark_as_advanced(CLEAR TIFF_LIBRARY)
@@ -277,6 +274,9 @@ if(WITH_GEOTIFF)
     if (NOT ZLIB_FOUND)
       find_package (ZLIB)
     endif ()
+    if(NOT PROJ4_FOUND)
+      find_package (PROJ4 REQUIRED)
+    endif()
   else()
     message(FATAL_ERROR "Unable to find sufficient GeoTIFF")
   endif()
