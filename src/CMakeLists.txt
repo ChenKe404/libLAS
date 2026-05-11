@@ -224,7 +224,6 @@ target_link_libraries(${LIBLAS_LIB_NAME}
   ${GDAL_LIBRARY}
   ${LASZIP_LIBRARY}
   ${Boost_LIBRARIES}
-  ${PROJ_LIBRARIES}
   ${PROJ4_LIBRARY}
 )
 

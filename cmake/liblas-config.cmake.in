@@ -1,4 +1,4 @@
-# Configure libLAS package
+﻿# Configure libLAS package
 #
 # It defines the following variables
 #  libLAS_FOUND = LIBLAS_FOUND - TRUE
@@ -25,7 +25,7 @@ set (libLAS_LIBRARY_DIRS "${PROJECT_ROOT_DIR}/lib")
 set (libLAS_BINARY_DIRS "${PROJECT_ROOT_DIR}/bin")
 
 include ("${_DIR}/liblas-depends.cmake")
-set (libLAS_LIBRARIES las las_c)
+set (libLAS_LIBRARIES @LIBLAS_LIB_NAME@ @LIBLAS_C_LIB_NAME@)
 
 # For backwards compatibility
 set (LIBLAS_FOUND TRUE)
